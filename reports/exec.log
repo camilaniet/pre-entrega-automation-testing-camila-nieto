@@ -1,0 +1,6 @@
+[20251023_224637] PASS test_inventory_items | URL: data:,
+[20251023_224638] PASS test_inventory_items | URL: https://www.saucedemo.com/inventory.html
+[20251023_224640] ERROR guardando screenshot: HTTPConnectionPool(host='localhost', port=51283): Max retries exceeded with url: /session/6d36d564bb38ed14007c3f6b2a3b52a0/screenshot (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000015105BA0DD0>: Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión'))
+[20251023_224658] PASS test_cart_add_product | URL: data:,
+[20251023_224659] PASS test_cart_add_product | URL: https://www.saucedemo.com/cart.html
+[20251023_224701] ERROR guardando screenshot: HTTPConnectionPool(host='localhost', port=56362): Max retries exceeded with url: /session/3590c574807ea9d324e63a5e6cf5fd09/screenshot (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000015105BEC270>: Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión'))
