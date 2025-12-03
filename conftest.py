@@ -4,7 +4,7 @@ import pytest
 from selenium import webdriver
 from datetime import datetime
 from pathlib import Path
-from utilis import login  # login reutilizable
+from utils import login  # login reutilizable
 
 # ---------------------------------------------
 # ALa carpeta raíz

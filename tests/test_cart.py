@@ -1,4 +1,4 @@
-from utilis import login
+from utils import login
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -11,7 +11,7 @@ def test_cart_add_product(driver):
     - Comprueba que el producto aparezca correctamente en el carrito.
     """
 
-    # Login reutilizando la función de utilis.py
+    # Login reutilizando la función de utils.py
     login(driver)
     wait = WebDriverWait(driver, 10)
 

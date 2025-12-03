@@ -1,5 +1,5 @@
 # tests/test_inventory.py
-from utilis import login
+from utils import login
 from selenium.webdriver.common.by import By
 
 def test_inventory_items(driver):
