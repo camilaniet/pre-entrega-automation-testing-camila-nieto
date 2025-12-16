@@ -1,30 +1,80 @@
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait          # +++
-from selenium.webdriver.support import expected_conditions as EC  # +++
+import pytest
+from pages.login_page import LoginPage
 
-def test_login():
-    driver = webdriver.Edge()
-    driver.set_window_size(1366, 900)   # evita layouts raros
-    driver.implicitly_wait(0)           # evita esperas implícitas que interfieran con las explícitas
 
-    try:
-        driver.get("https://www.saucedemo.com/")
+@pytest.mark.parametrize(
+    "usuario,password,debe_funcionar,mensaje_esperado",
+    [
+        # --- Casos válidos (deben loguear OK) ---
+        ("standard_user", "secret_sauce", True,  None),
+        ("problem_user", "secret_sauce", True,   None),
+        ("performance_glitch_user", "secret_sauce", True, None),
+        ("error_user", "secret_sauce", True,     None),
+        ("visual_user", "secret_sauce", True,    None),
 
-        # --- ESPERAS EXPLÍCITAS (reemplazan time.sleep) ---
-        wait = WebDriverWait(driver, 10)
-        wait.until(EC.visibility_of_element_located((By.ID, "user-name"))).send_keys("standard_user")
-        wait.until(EC.visibility_of_element_located((By.ID, "password"))).send_keys("secret_sauce")
-        wait.until(EC.element_to_be_clickable((By.ID, "login-button"))).click()
+        # locked_out_user -> credenciales válidas, pero usuario bloqueado
+        (
+            "locked_out_user",
+            "secret_sauce",
+            False,
+            "Sorry, this user has been locked out."
+        ),
 
-        # Validar SOLO redirección a /inventory.html (lo demás se hará en otros tests)
-        wait.until(EC.url_contains("/inventory.html"))
-        assert "/inventory.html" in driver.current_url, "No se redirigió correctamente al inventario."
+        # --- Combinaciones inválidas ---
+        # Usuario correcto, password incorrecta
+        (
+            "standard_user",
+            "wrong_pass",
+            False,
+            "Username and password do not match any user in this service",
+        ),
 
-        print("Login exitoso y validado correctamente.")
+        # Usuario inexistente, password correcta
+        (
+            "no_such_user",
+            "secret_sauce",
+            False,
+            "Username and password do not match any user in this service",
+        ),
 
-    except Exception as e:
-        print(f"Error en test_login: {e}")
-        raise
-    finally:
-        driver.quit()
+        # Usuario vacío, password llena
+        (
+            "",
+            "secret_sauce",
+            False,
+            "Username is required",
+        ),
+
+        # Usuario lleno, password vacía
+        (
+            "standard_user",
+            "",
+            False,
+            "Password is required",
+        ),
+
+        # Ambos vacíos
+        (
+            "",
+            "",
+            False,
+            "Username is required",
+        ),
+    ],
+)
+def test_login_validation(driver, usuario, password, debe_funcionar, mensaje_esperado):
+    login_page = LoginPage(driver)
+    login_page.abrir_pagina()
+    login_page.login(usuario, password)
+
+    if debe_funcionar:
+        # Validaciones para un login exitoso
+        assert "/inventory.html" in driver.current_url, \
+            "No se redirigió al inventario con credenciales válidas"
+    else:
+        # Validaciones para un login fallido
+        texto_error = login_page.obtener_error()
+        print("URL actual:", driver.current_url)
+        print("Mensaje de error:", texto_error)
+        assert mensaje_esperado in texto_error, \
+            f"El mensaje de error no coincide. Esperado: {mensaje_esperado}"
